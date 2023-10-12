@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let todos = [];
 
+    // Load todos from local storage if available
+    const storedTodos = localStorage.getItem("todos");
+    if (storedTodos) {
+        todos = JSON.parse(storedTodos);
+    }
+
     addButton.addEventListener("click", function () {
         const todoText = todoInput.value.trim();
         if (todoText === "") {
@@ -18,6 +24,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         todos.push(todo);
         todoInput.value = "";
+
+        // Save todos to local storage
+        localStorage.setItem("todos", JSON.stringify(todos));
+
         displayTodos();
     });
 
@@ -35,6 +45,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (event.key === "Enter") {
                         todos[index].text = input.value;
                         todos[index].isEditing = false;
+                        // Save updated todos to local storage
+                        localStorage.setItem("todos", JSON.stringify(todos));
                         displayTodos();
                     }
                 });
@@ -52,7 +64,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const deleteButton = document.createElement("button");
                 deleteButton.classList.add("delete-button");
+
+                deleteButton.textContent = "Delete";
                 deleteButton.innerHTML = '<i class="fa-solid fa-circle-xmark timeslogo"></i>';
+
 
                 editButton.addEventListener("click", () => {
                     todos[index].isEditing = true;
@@ -61,6 +76,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 deleteButton.addEventListener("click", () => {
                     todos.splice(index, 1);
+                    // Save updated todos to local storage
+                    localStorage.setItem("todos", JSON.stringify(todos));
                     displayTodos();
                 });
 
@@ -76,4 +93,3 @@ document.addEventListener("DOMContentLoaded", function () {
 
     displayTodos();
 });
-  
