@@ -1,0 +1,109 @@
+openapi: 3.0.3
+info:
+  title: Todo API
+  version: 1.0.0
+
+paths:
+  /api/todo:
+    get:
+      summary: Lấy danh sách công việc
+      responses:
+        '200':
+          description: Danh sách công việc
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: ID của công việc
+                    taskName:
+                      type: string
+                      description: Tên công việc
+
+    post:
+      summary: Thêm công việc mới
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                taskName:
+                  type: string
+                  description: Tên công việc
+      responses:
+        '201':
+          description: Công việc đã được thêm thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID của công việc
+                  taskName:
+                    type: string
+                    description: Tên công việc
+
+  /api/todo/{task_id}:
+    delete:
+      summary: Xóa công việc
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          description: ID của công việc
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Công việc đã được xóa thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID của công việc đã xóa
+                  taskName:
+                    type: string
+                    description: Tên công việc đã xóa
+
+    put:
+      summary: Chỉnh sửa công việc
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          description: ID của công việc
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                taskName:
+                  type: string
+                  description: Tên công việc
+      responses:
+        '200':
+          description: Công việc đã được chỉnh sửa thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID của công việc
+                  taskName:
+                    type: string
+                    description: Tên công việc (đã chỉnh sửa)

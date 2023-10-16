@@ -1,2 +1,6 @@
 # Advanced-Web-Design
-EG02 làm todo app
+EG03 Call API from TODO app
+- Tạo mới 
+- lấy dữ liệu
+- chỉnh sửa 
+- Xoá 
