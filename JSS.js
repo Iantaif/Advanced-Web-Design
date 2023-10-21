@@ -5,31 +5,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let todos = [];
 
-    // Load todos from local storage if available
-    const storedTodos = localStorage.getItem("todos");
-    if (storedTodos) {
-        todos = JSON.parse(storedTodos);
+    // Function to fetch todos from the API
+    async function fetchTodos() {
+        const response = await fetch('https://1112bed1-7b82-4ca4-b68f-80bf06a38787.mock.pstmn.io/api/todo');
+        const data = await response.json();
+        todos = data;
+        displayTodos();
     }
 
-    addButton.addEventListener("click", function () {
+    // Function to add a new todo
+    async function addTodo() {
         const todoText = todoInput.value.trim();
         if (todoText === "") {
             return;
         }
 
-        const todo = {
-            text: todoText,
-            isEditing: false,
-        };
+        const response = await fetch('https://1112bed1-7b82-4ca4-b68f-80bf06a38787.mock.pstmn.io/api/todo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                taskName: todoText
+            })
+        });
 
-        todos.push(todo);
+        const newTodo = await response.json();
+        todos.push(newTodo);
         todoInput.value = "";
-
-        // Save todos to local storage
-        localStorage.setItem("todos", JSON.stringify(todos));
-
         displayTodos();
-    });
+    }
+
+    // Function to delete a todo
+    async function deleteTodo(index) {
+        const todoId = todos[index].id;
+        await fetch(`https://1112bed1-7b82-4ca4-b68f-80bf06a38787.mock.pstmn.io/api/todo/${todoId}`, {
+            method: 'DELETE'
+        });
+        todos.splice(index, 1);
+        displayTodos();
+    }
+
+    // Function to update a todo
+    async function updateTodoText(index, newText) {
+        const todoId = todos[index].id;
+        await fetch(`https://1112bed1-7b82-4ca4-b68f-80bf06a38787.mock.pstmn.io/api/todo/${todoId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                taskName: newText
+            })
+        });
+        todos[index].text = newText;
+        todos[index].isEditing = false;
+        displayTodos();
+    }
+
+    addButton.addEventListener("click", addTodo);
 
     function displayTodos() {
         todoList.innerHTML = "";
@@ -43,31 +77,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 input.value = todo.text;
                 input.addEventListener("keyup", (event) => {
                     if (event.key === "Enter") {
-                        todos[index].text = input.value;
-                        todos[index].isEditing = false;
-                        // Save updated todos to local storage
-                        localStorage.setItem("todos", JSON.stringify(todos));
-                        displayTodos();
+                        updateTodoText(index, input.value);
                     }
                 });
 
                 listItem.appendChild(input);
             } else {
-                listItem.textContent = todo.text;
+                listItem.textContent = todo.taskName;
 
                 const buttonsContainer = document.createElement("div");
                 buttonsContainer.classList.add("button-container");
 
                 const editButton = document.createElement("button");
                 editButton.classList.add("edit-button");
-                editButton.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+                editButton.textContent = "Edit";
 
                 const deleteButton = document.createElement("button");
                 deleteButton.classList.add("delete-button");
-
                 deleteButton.textContent = "Delete";
-                deleteButton.innerHTML = '<i class="fa-solid fa-circle-xmark timeslogo"></i>';
-
 
                 editButton.addEventListener("click", () => {
                     todos[index].isEditing = true;
@@ -75,10 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 deleteButton.addEventListener("click", () => {
-                    todos.splice(index, 1);
-                    // Save updated todos to local storage
-                    localStorage.setItem("todos", JSON.stringify(todos));
-                    displayTodos();
+                    deleteTodo(index);
                 });
 
                 buttonsContainer.appendChild(editButton);
@@ -91,5 +115,5 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    displayTodos();
+    fetchTodos();
 });
