@@ -7,64 +7,79 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to fetch todos from the API
     async function fetchTodos() {
-        const response = await fetch('https://1112bed1-7b82-4ca4-b68f-80bf06a38787.mock.pstmn.io/api/todo');
-        const data = await response.json();
-        todos = data;
-        displayTodos();
+        try {
+            const response = await fetch('https://743e6beb-8fed-41b0-bf1a-6d487a80e69f.mock.pstmn.io/api/todo');
+            const data = await response.json();
+            todos = data;
+            displayTodos();
+        } catch (error) {
+            console.error('Error fetching todos:', error);
+        }
     }
 
     // Function to add a new todo
     async function addTodo() {
-        const todoText = todoInput.value.trim();
-        if (todoText === "") {
-            return;
+        try {
+            const todoText = todoInput.value.trim();
+            if (todoText === "") {
+                return;
+            }
+
+            const response = await fetch('https://743e6beb-8fed-41b0-bf1a-6d487a80e69f.mock.pstmn.io/api/todo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    taskName: todoText
+                })
+            });
+
+            const newTodo = await response.json();
+            todos.push(newTodo);
+            todoInput.value = "";
+            displayTodos();
+        } catch (error) {
+            console.error('Error adding todo:', error);
         }
-
-        const response = await fetch('https://1112bed1-7b82-4ca4-b68f-80bf06a38787.mock.pstmn.io/api/todo', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                taskName: todoText
-            })
-        });
-
-        const newTodo = await response.json();
-        todos.push(newTodo);
-        todoInput.value = "";
-        displayTodos();
     }
 
     // Function to delete a todo
     async function deleteTodo(index) {
-        const todoId = todos[index].id;
-        await fetch(`https://1112bed1-7b82-4ca4-b68f-80bf06a38787.mock.pstmn.io/api/todo/${todoId}`, {
-            method: 'DELETE'
-        });
-        todos.splice(index, 1);
-        displayTodos();
+        try {
+            const todoId = todos[index].id;
+            await fetch(`https://743e6beb-8fed-41b0-bf1a-6d487a80e69f.mock.pstmn.io/api/todo/${todoId}`, {
+                method: 'DELETE'
+            });
+            todos.splice(index, 1);
+            displayTodos();
+        } catch (error) {
+            console.error('Error deleting todo:', error);
+        }
     }
 
     // Function to update a todo
     async function updateTodoText(index, newText) {
-        const todoId = todos[index].id;
-        await fetch(`https://1112bed1-7b82-4ca4-b68f-80bf06a38787.mock.pstmn.io/api/todo/${todoId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                taskName: newText
-            })
-        });
-        todos[index].text = newText;
-        todos[index].isEditing = false;
-        displayTodos();
+        try {
+            const todoId = todos[index].id;
+            await fetch(`https://743e6beb-8fed-41b0-bf1a-6d487a80e69f.mock.pstmn.io/api/todo/${todoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    taskName: newText
+                })
+            });
+            todos[index].taskName = newText;
+            todos[index].isEditing = false;
+            displayTodos();
+        } catch (error) {
+            console.error('Error updating todo:', error);
+        }
     }
 
-    addButton.addEventListener("click", addTodo);
-
+    // Function to display todos
     function displayTodos() {
         todoList.innerHTML = "";
 
@@ -74,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (todo.isEditing) {
                 const input = document.createElement("input");
                 input.type = "text";
-                input.value = todo.text;
+                input.value = todo.taskName;
                 input.addEventListener("keyup", (event) => {
                     if (event.key === "Enter") {
                         updateTodoText(index, input.value);
@@ -115,5 +130,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Fetch initial todos
     fetchTodos();
+
+    // Add event listener to the add button
+    addButton.addEventListener("click", addTodo);
 });
