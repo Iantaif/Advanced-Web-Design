@@ -1,49 +1,44 @@
-import React from "react";
-import "./App.css";
+import FilterableProductTable from './components/FilterableProductTable/FilterableProductTable.js';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-head">
-        <h1>Product Management App</h1>
-      </header>
-      <input
-        type="text"
-        class="searchTerm"
-        placeholder="What are you looking for?"
-      ></input>
-      <input type="checkbox"></input>
-      <div></div>
-      <span class="checkmark"> Only show products in stock</span>
-
-      <div className="App-content">
-        <table>
-          <div>
-          <tr>
-            <th>name</th>
-            <th>price</th>
-          </tr>
-          </div>
-          <div class = "frui">
-          <tr>
-            <th>Fruit</th>
-          </tr>
-          </div>
-          <div>
-          <tr>
-            <td>Apple</td>
-            <td>1$</td>
-          </tr>
-          <tr></tr>
-          <tr></tr>
-          <tr></tr>
-          <tr></tr>
-          <tr></tr>
-          </div>
-        </table>
-      </div>
-    </div>
-  );
+const PRODUCTS = [
+{
+category: "Fruits",
+price: "$1",
+stocked: true,
+name: "Apple"
+},
+{
+category: "Fruits",
+price: "$1",
+stocked: true,
+name: "Dragonfruit"
+},
+{
+category: "Fruits",
+price: "$2",
+stocked: false,
+name: "Passionfruit"
+},
+{
+category: "Vegetables",
+price: "$2",
+stocked: true,
+name: "Spinach"
+},
+{
+category: "Vegetables",
+price: "$4",
+stocked: false,
+name: "Pumpkin"
+},
+{
+category: "Vegetables",
+price: "$1",
+stocked: true,
+name: "Peas"
 }
+];
 
-export default App;
+export default function App() {
+return FilterableProductTable({ products: PRODUCTS });
+}
