@@ -1,0 +1,25 @@
+
+Thuận
+Thuận Lê
+counter css
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  width: 200px;
+  margin-bottom: 10px;
+  background-color: rgb(186, 186, 255); /* Add blue background to the row */
+  color: rgb(250, 10, 10); /* Change text color to white for better visibility */
+}
+.counter {
+  margin-left: 10px;
+}
+.green-button {
+  background-color: green;
+}
