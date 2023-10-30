@@ -1,75 +1,104 @@
-import React from "react";
-import "./App.css";
-import CounterRow from "./components/CounterRow";
+import React, { useState, useEffect } from 'react';
+import './App.css';
 
-function App() {
-  const people = [
-    {
-      id: 0,
-      name: 'Creola Katherine Johnson',
-      profession: 'mathematician',
-    },
-    {
-      id: 1,
-      name: 'Mario José Molina-Pasquel Henríquez',
-      profession: 'chemist',
-    },
-    {
-      id: 2,
-      name: 'Mohammad Abdus Salam',
-      profession: 'physicist',
-    },
-    {
-      id: 3,
-      name: 'Percy Lavon Julian',
-      profession: 'chemist',
-    },
-    {
-      id: 4,
-      name: 'Subrahmanyan Chandrasekhar',
-      profession: 'astrophysicist',
-    },
-  ];
-  let counterRows = [];
-  for (let i = 0; i < 5; i++) {
-    counterRows.push(<CounterRow key={i} id={i + 1} />);
-  }
-  const listItems = people.map((person) => <li key={person.id}> {person.name}</li>);
+// AccordionContainer for Requirement 1
+const AccordionContainer1 = ({ data }) => {
+  const [openIndexes, setOpenIndexes] = useState([]);
 
-
-  let guest = 0;
-function TeaSet() {
-    return (
-      <>
-        <Cup />
-        <Cup />
-        <Cup />
-      </>
-    );
-  }
-
-function Cup(props) {
-  // Bad: changing a preexisting variable!
-  guest = guest + 1;
-  return <h2>Tea cup for guest #{props.guest}</h2>;
-}
-
-
-
-
+  const handleItemClick = (index) => {
+    const isItemOpen = openIndexes.includes(index);
+    if (isItemOpen) {
+      setOpenIndexes(openIndexes.filter((item) => item !== index)); // Đóng nếu đã mở
+    } else {
+      setOpenIndexes([...openIndexes, index]); // Mở nếu chưa mở
+    }
+  };
 
   return (
-    <>
-      <header>
-        <h1>Counter application</h1>
-      </header>
-      <div id='counterContainer'>{counterRows}</div>
-      <ul>{listItems}</ul>
-      <Cup guest={1} />
-      <Cup guest={2} />
-      <Cup guest={3} />
-    </>
+    <div className="accordion-container">
+      {data.map((item, index) => (
+        <AccordionItem
+          key={index}
+          title={item.title}
+          content={item.content}
+          isOpen={openIndexes.includes(index)}
+          onClick={() => handleItemClick(index)}
+        />
+      ))}
+    </div>
   );
-}
+};
+
+
+// AccordionContainer for Requirement 2
+const AccordionContainer2 = ({ data }) => {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const handleItemClick = (index) => {
+    setOpenIndex(index);
+  };
+
+  return (
+    <div className="accordion-container">
+      {data.map((item, index) => (
+        <AccordionItem
+          key={index}
+          title={item.title}
+          content={item.content}
+          isOpen={index === openIndex}
+          onClick={() => handleItemClick(index)}
+        />
+      ))}
+    </div>
+  );
+};
+
+// AccordionItem component
+const AccordionItem = ({ title, content, isOpen, onClick }) => {
+  return (
+    <div className="accordion-item">
+      <div className="accordion-title" onClick={onClick}>
+        {title}
+      </div>
+      {isOpen && <div className="accordion-content">{content}</div>}
+    </div>
+  );
+};
+
+// App component
+const App = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('https://awd-2023.azurewebsites.net/Accordions', {
+        headers: {
+          'student-name': 'John Doe' // Set the student name here
+        }
+      });
+      const jsonData = await response.json();
+      setData(jsonData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  return (
+    <div className="App">
+      <div>
+        <h2>AccordionContainer 1</h2>
+        <AccordionContainer1 data={data} />
+      </div>
+      <div>
+        <h2>AccordionContainer 2</h2>
+        <AccordionContainer2 data={data} />
+      </div>
+    </div>
+  );
+};
 
 export default App;
