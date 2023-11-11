@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import "./css/style.css"; // Import corresponding CSS file
+import "./css/style.css"; // Import corresponding CSS file'
 
 const useTodoApp = () => {
   const [todos, setTodos] = useState([]);
@@ -13,37 +13,20 @@ const useTodoApp = () => {
         "https://743e6beb-8fed-41b0-bf1a-6d487a80e69f.mock.pstmn.io/api/todo"
       );
       const data = await response.json();
-      setTodos(data);
+      setTodos(data.map(todo => ({ id: todo.id, text: todo.taskName })));
     } catch (error) {
       console.error("Error fetching todos:", error);
     }
   };
 
-  const addTodo = async (todoText) => {
-    try {
-      if (todoText === "") {
-        return;
-      }
+  const addTodo = (text) => {
+    const newTodo = {
+      id: Date.now(),
+      text
+    };
 
-      const response = await fetch(
-        "https://743e6beb-8fed-41b0-bf1a-6d487a80e69f.mock.pstmn.io/api/todo",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            taskName: todoText,
-          }),
-        }
-      );
-
-      const newTodo = await response.json();
-      setTodos([...todos, newTodo]);
-    } catch (error) {
-      console.error("Error adding todo:", error);
-    }
-  };
+    setTodos([...todos, newTodo]);
+  }
 
   const deleteTodo = async (index) => {
     try {
@@ -77,7 +60,7 @@ const useTodoApp = () => {
         }
       );
       const updatedTodos = [...todos];
-      updatedTodos[index].taskName = newText;
+      updatedTodos[index].text = newText; // Update the property name here
       updatedTodos[index].isEditing = false;
       setTodos(updatedTodos);
     } catch (error) {
@@ -99,10 +82,9 @@ const TodoApp = () => {
     const todoInput = document.getElementById("todo-input");
     const newTodoText = todoInput.value.trim();
     if (newTodoText !== "") {
-      addTodo(newTodoText); // Chuyển nội dung nhiệm vụ mới vào hàm addTodo
-      todoInput.value = ""; // Xóa nội dung ô nhập sau khi thêm nhiệm vụ thành công
+      addTodo(newTodoText);
+      todoInput.value = "";
     } else {
-      // Hiển thị thông báo yêu cầu người dùng nhập nội dung trước khi thêm nhiệm vụ
       alert("Please enter a task before adding.");
     }
   };
@@ -112,7 +94,7 @@ const TodoApp = () => {
   };
 
   const handleUpdateTodoText = (index, newText) => {
-    const newTodoText = prompt("Enter the new text", newText); // Sử dụng prompt để nhập nội dung mới
+    const newTodoText = prompt("Enter the new text", newText);
     if (newTodoText !== null) {
       updateTodoText(index, newTodoText);
     }
@@ -138,7 +120,7 @@ const TodoApp = () => {
           <ul id="todo-list" className="My-todo-list">
             {todos.map((todo, index) => (
               <li key={index}>
-                {todo.taskName}
+                {todo.text} {/* Update the property name here */}
                 <div className="button-container">
                   <button
                     className="edit-button"
