@@ -1,60 +1,134 @@
-/* styles.css */
-html {
-    background-color: rgba(0, 28, 68, 1);
-    font-family: 'Jacques Francois', serif;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .header1 {
-    font-size: 5rem;
-    display: flex;
-    justify-content: center;
-    color: rgba(188, 255, 255, 1);
-  }
-  
-  #todo-input {
-    width: 50rem;
-    height: 5rem;
-    cursor: pointer;
-    font-size: 3rem;
-    font-family: 'Jacques Francois', serif;
-    border-radius: 1rem;
-    background-color: rgba(45, 153, 174, 1);
-    margin-right: 1rem;
-  }
-  
-  .my-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-  }
-  
-  li {
-    font-size: 2.5rem;
-    border-radius: 2rem;
-    background-color: rgba(45, 153, 174, 1);
-    width: 50rem;
-    height: 4rem;
-    list-style-type: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    padding-left: 20px;
-  }
-  
-  button.delete-button {
-    width: 5rem;
-    background-color: rgba(45, 153, 174, 1);
-    border: none;
-    cursor: pointer;
-    border-radius: 50%;
-  }
-  
-  .delete-button {
-    margin-left: auto;
-    margin-right: 10px;
-  }
-  
+.todo-app {
+  background-color: rgba(0, 28, 68, 1);
+  font-family: 'Jacques Francois', serif;
+  margin: 0;
+  padding: 0;
+}
+
+.nav {
+  font-size: 10rem;
+  color: rgba(45, 153, 174, 1);
+}
+
+.header1 {
+  font-size: 5rem;
+  display: flex;
+  justify-content: center;
+  color: rgba(188, 255, 255, 1);
+}
+
+.add-todo {
+  display: flex;
+  justify-content: center;
+}
+
+#todo-input {
+  width: 50rem;
+  height: 5rem;
+  cursor: pointer;
+  font-size: 3rem;
+  font-family: 'Jacques Francois', serif;
+  border-radius: 1rem;
+  background-color: rgba(45, 153, 174, 1);
+  margin-right: 1rem;
+}
+
+input::placeholder {
+  color: rgba(51, 54, 63, 1);
+  font-style: 'Jacques Francois', serif;
+  border-color: none;
+  font-weight: lighter;
+}
+
+input {
+  border: none;
+  font-family: 'Jacques Francois', serif;
+}
+
+#add-button {
+  background-color: rgba(188, 255, 255, 1);
+  border: none;
+  border-radius: 3rem;
+  width: 5rem;
+  cursor: pointer;
+}
+
+#add-button:hover {
+  background-color: blanchedalmond;
+  border: solid black;
+}
+
+.custom-plus {
+  font-size: 2em;
+  font-weight: lighter;
+}
+
+.fa-solid, .fas {
+  font-weight: lighter;
+}
+
+.header2 {
+  font-size: 4rem;
+  display: flex;
+  justify-content: center;
+  color: rgba(188, 255, 255, 1);
+}
+
+.my-list {
+  display: flex;
+  justify-content: center;
+  font-size: 2rem;
+  border-radius: 2rem;
+}
+
+.My-todo-list {
+  list-style-type: none;
+}
+
+li {
+  font-size: 2.5rem;
+  border-radius: 2rem;
+  background-color: rgba(45, 153, 174, 1);
+  width: 50rem;
+  height: 4rem;
+  padding-left: 30px;
+  padding-top: 10px;
+  display: flex;
+  margin-bottom: 20px;
+}
+
+li .button-container {
+  margin-left: auto;
+  margin-bottom: 5px;
+}
+
+button.edit-button {
+  background-color: rgba(45, 153, 174, 1);
+  color: black;
+  border: none;
+  cursor: pointer;
+  margin-right: 2rem;
+  font-size: 2.5rem;
+}
+
+button.delete-button {
+  width: 5rem;
+  background-color: rgba(45, 153, 174, 1);
+  border: none;
+  cursor: pointer;
+  border-radius: 80%;
+  font-size: 24px;
+  color: red;
+}
+
+li > div {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.timeslogo {
+  color: rgba(45, 153, 174, 1);
+  background-color: rgba(248, 218, 221, 1);
+  border-radius: 50%;
+  font-size: 2.5em;
+}
