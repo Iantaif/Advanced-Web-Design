@@ -1,145 +1,101 @@
-import React, { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import "./css/style.css"; // Import corresponding CSS file'
-
-const useTodoApp = () => {
-  const [todos, setTodos] = useState([]);
-
-  const fetchTodos = async () => {
-    try {
-      const response = await fetch(
-        "https://743e6beb-8fed-41b0-bf1a-6d487a80e69f.mock.pstmn.io/api/todo"
-      );
-      const data = await response.json();
-      setTodos(data.map(todo => ({ id: todo.id, text: todo.taskName })));
-    } catch (error) {
-      console.error("Error fetching todos:", error);
-    }
-  };
-
-  const addTodo = (text) => {
-    const newTodo = {
-      id: Date.now(),
-      text
-    };
-
-    setTodos([...todos, newTodo]);
-  }
-
-  const deleteTodo = async (index) => {
-    try {
-      const todoId = todos[index].id;
-      await fetch(
-        `https://743e6beb-8fed-41b0-bf1a-6d487a80e69f.mock.pstmn.io/api/todo/${todoId}`,
-        {
-          method: "DELETE",
-        }
-      );
-      const updatedTodos = todos.filter((_, i) => i !== index);
-      setTodos(updatedTodos);
-    } catch (error) {
-      console.error("Error deleting todo:", error);
-    }
-  };
-
-  const updateTodoText = async (index, newText) => {
-    try {
-      const todoId = todos[index].id;
-      await fetch(
-        `https://743e6beb-8fed-41b0-bf1a-6d487a80e69f.mock.pstmn.io/api/todo/${todoId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            taskName: newText,
-          }),
-        }
-      );
-      const updatedTodos = [...todos];
-      updatedTodos[index].text = newText; // Update the property name here
-      updatedTodos[index].isEditing = false;
-      setTodos(updatedTodos);
-    } catch (error) {
-      console.error("Error updating todo:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchTodos();
-  }, []);
-
-  return { todos, addTodo, deleteTodo, updateTodoText };
-};
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const TodoApp = () => {
-  const { todos, addTodo, deleteTodo, updateTodoText } = useTodoApp();
+  const [userInfo, setUserInfo] = useState(null);
 
-  const handleAddTodo = () => {
-    const todoInput = document.getElementById("todo-input");
-    const newTodoText = todoInput.value.trim();
-    if (newTodoText !== "") {
-      addTodo(newTodoText);
-      todoInput.value = "";
-    } else {
-      alert("Please enter a task before adding.");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const isAuthenticated = localStorage.getItem('accessToken') !== null;
+
+        if (!isAuthenticated) {
+          window.location.href = '/login';
+        } else {
+          try {
+            const response = await axios.get('https://awd-2023.azurewebsites.net/Auth/me', {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+              },
+            });
+
+            // Assuming the server response is a JSON string, parse it into an object
+            const userData = JSON.parse(response.data);
+
+            setUserInfo(userData);
+          } catch (error) {
+            // Handle the case where the token has expired
+            if (error.response && error.response.status === 401) {
+              await refreshAccessToken();
+              // Retry the original request
+              const response = await axios.get('https://awd-2023.azurewebsites.net/Auth/me', {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+              });
+
+              // Parse the response data as JSON
+              const userData = JSON.parse(response.data);
+
+              setUserInfo(userData);
+            } else {
+              console.error('Error fetching user information:', error);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const refreshAccessToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken');
+
+      const refreshResponse = await axios.post(
+        'https://awd-2023.azurewebsites.net/Auth/refresh-token',
+        {
+          refreshToken,
+        }
+      );
+
+      const newAccessToken = refreshResponse.data.accessToken;
+
+      // Update the stored access token
+      localStorage.setItem('accessToken', newAccessToken);
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+
+      // Handle the case where the refresh token is also expired
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      window.location.href = '/login';
     }
   };
 
-  const handleDeleteTodo = (index) => {
-    deleteTodo(index);
-  };
-
-  const handleUpdateTodoText = (index, newText) => {
-    const newTodoText = prompt("Enter the new text", newText);
-    if (newTodoText !== null) {
-      updateTodoText(index, newTodoText);
-    }
+  const handleLogout = () => {
+    // Placeholder for your logout logic (clear tokens, etc.)
+    // Replace the following line with your actual logout logic
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    window.location.href = '/login';
   };
 
   return (
-    <div className="todo-app">
-      <nav className="nav">TO DO</nav>
-      <div className="todo-container">
-        <div className="header1">
-          <h1>Task List</h1>
+    <div>
+      <h2>Todo App</h2>
+      {userInfo && (
+        <div>
+          <p>Welcome, {userInfo.username}!</p>
+          <p>Email: {userInfo.email}</p>
+          {/* Display other user information */}
         </div>
-        <div className="add-todo">
-          <input type="text" id="todo-input" placeholder="Your planned ?" />
-          <button id="add-button" onClick={handleAddTodo}>
-            <FontAwesomeIcon icon={faPlus} className="custom-plus" />
-          </button>
-        </div>
-        <div className="header2">
-          <h2>Task</h2>
-        </div>
-        <div className="my-list">
-          <ul id="todo-list" className="My-todo-list">
-            {todos.map((todo, index) => (
-              <li key={index}>
-                {todo.text} {/* Update the property name here */}
-                <div className="button-container">
-                  <button
-                    className="edit-button"
-                    onClick={() => handleUpdateTodoText(index, "New Text")}
-                  >
-                    <FontAwesomeIcon icon={faEdit} className="button-icon" />
-                  </button>
-                  <button
-                    className="delete-button"
-                    onClick={() => handleDeleteTodo(index)}
-                  >
-                    <FontAwesomeIcon icon={faTrash} className="button-icon" />
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      )}
+      <button onClick={handleLogout}>Logout</button>
+      {/* Your Todo App content goes here */}
     </div>
   );
 };

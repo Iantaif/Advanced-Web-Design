@@ -1,11 +1,17 @@
 import React from "react";
 import TodoApp from "./TodoApp";
-import About from './pages/about';
+import Login from './pages/Login';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 
 function App() {
   return (
-      <TodoApp />
+    <BrowserRouter>
+    <Routes>
+      <Route path="/login" element={<Login/>} /> 
+      <Route path="/todoapp" element={<TodoApp />} />
+    </Routes>
+  </BrowserRouter>
   );
 }
 
